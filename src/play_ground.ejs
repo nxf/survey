@@ -1,0 +1,21 @@
+<h1><%= title %></h1>
+<ul>
+	<% for(var i=0; i < questions.length; i++) { %>
+		<% var question = questions[i]%>
+			<li data-action="edit-<%=i%>">
+		    <%= 1+i %>.<%=question.title%><br/>
+		    <% if("fillIn" === question.type) { %>
+		    	<input type="text"/>
+		    <% }else if("radio" === question.type) {%>
+		    	<% for(var j=0;j<question.data.length;j++) {%>
+		    		<input type="radio" name="option<%=i%>"><%= question.data[j].option %></input>
+		    	<%}%>
+		    <% } else if("checkbox" === question.type) { %>
+		    	<%for(var j=0;j<question.data.length;j++) {%>
+		    		<input type=checkbox name="option<%=i%>"><%= question.data[j].option %></input>
+		    	<%}%>
+		    <% } %>
+		    </li>
+	    
+	<% } %>
+</ul>

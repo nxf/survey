@@ -1,0 +1,33 @@
+<h1><%= title %></h1>
+<h2><%= PageType["t"+type] %></h2>
+<ul>
+	<% for(var i=0; i < questions.length; i++) { %>
+		<% var question = questions[i]%>
+			<li class="row">
+				<div class="col-lg-8">
+				    <p data-action="match_dest-<%=i%>" class="matchDest" id="title_<%= i %>">
+				    	<%= 1+i %>.<%=question.title%>
+				    </p>
+				    <% if("text" === question.type) { %>
+				    	<input type="text" readonly/>
+				    <% }else if("radio" === question.type) {%>
+				    	<% for(var j=0;j<question.data.length;j++) {%>
+				    		<input type="checkbox" name="option<%=i%>"  data-action="match_src-<%=i%>_<%=j%>" <%= question.data[j].next ? "checked" : ""%> id="option_<%=i%>_<%=j%>">
+				    			<%= question.data[j].title %>
+				    		</input>
+				    	<%}%>
+				    <% } else if("checkbox" === question.type) { %>
+				    	<%for(var j=0;j<question.data.length;j++) {%>
+				    	   <input type=checkbox name="option<%=i%>"  data-action="match_src-<%=i%>_<%=j%>" <%= question.data[j].next ? "checked" : ""%> id="option_<%=i%>_<%=j%>">
+				    			<%= question.data[j].title %>
+				    	   </input>
+				    	<%}%>
+				    <% } %>
+				</div>
+				<div class="col-lg-4">
+					<button data-action="edit-<%=i%>">修改</button>
+				</div>
+		    </li>
+	    
+	<% } %>
+</ul>
