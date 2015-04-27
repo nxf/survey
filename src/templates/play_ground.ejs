@@ -18,7 +18,7 @@
 					    		</input>
 				    		</label>
 				    	<%}%>
-				    <% } else if("checkbox" === question.type) { %>
+				    <% } else if("checkbox" === question.type || "vote" == question.type) { %>
 				    	<%for(var j=0;j<question.data.length;j++) {%>
 				    	   <label>
 					    	   <input type=checkbox name="option<%=i%>"   <%= question.data[j].next ? "checked" : ""%> data-action="match_src-<%=i%>_<%=j%>" id="option_<%=i%>_<%=j%>">

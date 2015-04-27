@@ -306,6 +306,14 @@ function initObject(type){
 			{},
 			{}
 			]
+		},
+		vote:{
+			data:[
+			{},
+			{},
+			{},
+			{}
+			]
 		}
 
 	};
@@ -361,6 +369,51 @@ var Page = {
 			},
 			{
 				title:"食品",
+				id:1
+			}
+		]
+	},
+	{
+		type:"matrix",
+		title:"你怎么评价微店？",
+		data:{
+			columns: [
+				"很不满意",
+				"不满意",
+				"一般",
+				"满意",
+				"很满意"
+			],
+			rows: [
+				{
+					title: "鞋子",
+					id:3
+				},
+				{
+					title: "衣服",
+					id:2
+				},
+				{
+					title:"食品",
+					id:1
+				}
+			]
+		}
+	},
+	{
+		type:"vote",
+		title:"投票题：你更喜欢哪个微商平台？",
+		data:[
+			{
+				title: "微店",
+				id:3
+			},
+			{
+				title: "微盟",
+				id:2
+			},
+			{
+				title:"拍拍",
 				id:1
 			}
 		]
