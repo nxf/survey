@@ -12,15 +12,19 @@
 				    	<input type="text" readonly/>
 				    <% }else if("radio" === question.type) {%>
 				    	<% for(var j=0;j<question.data.length;j++) {%>
-				    		<input type="checkbox" name="option<%=i%>"  data-action="match_src-<%=i%>_<%=j%>" <%= question.data[j].next ? "checked" : ""%> id="option_<%=i%>_<%=j%>">
-				    			<%= question.data[j].title %>
-				    		</input>
+				    		<label>
+					    		<input type="checkbox" name="option<%=i%>"  <%= question.data[j].next ? "checked" : ""%> data-action="match_src-<%=i%>_<%=j%>" id="option_<%=i%>_<%=j%>">
+					    			<%= question.data[j].title %>
+					    		</input>
+				    		</label>
 				    	<%}%>
 				    <% } else if("checkbox" === question.type) { %>
 				    	<%for(var j=0;j<question.data.length;j++) {%>
-				    	   <input type=checkbox name="option<%=i%>"  data-action="match_src-<%=i%>_<%=j%>" <%= question.data[j].next ? "checked" : ""%> id="option_<%=i%>_<%=j%>">
-				    			<%= question.data[j].title %>
-				    	   </input>
+				    	   <label>
+					    	   <input type=checkbox name="option<%=i%>"   <%= question.data[j].next ? "checked" : ""%> data-action="match_src-<%=i%>_<%=j%>" id="option_<%=i%>_<%=j%>">
+					    			<%= question.data[j].title %>
+					    	   </input>
+				    	   </label>
 				    	<%}%>
 				    <% } %>
 				</div>

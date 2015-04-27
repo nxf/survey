@@ -1,9 +1,9 @@
 document.addEventListener("click",function(event){
 	var target = event.target;
+	console.log("click");
 	tt = target;
 	var action = target.getAttribute("data-action");
 	var matchStart = false;
-	console.log(action);
 	if(action){
 		var splited_action = action.split("-");
 		var action = splited_action[0];
@@ -28,15 +28,16 @@ document.addEventListener("click",function(event){
 			compileAndSet("play_ground",Page,"#play_ground");
 		}else if("match_src" === action) {
 			matchStart = true;
-			Match.start(aim,target);
+			if(!target.checked){
+				Match.end(aim);
+			}else{
+				Match.start(aim,target);
+			}
+			
 		}else if("match_dest" === action) {
-			Match.end(aim);
+			Match.finish(aim);
 		}
 	}
-	if(!matchStart){
-		Match.end();	
-	}
-	
 });
 
 document.addEventListener("input",function(event) {
@@ -45,19 +46,22 @@ document.addEventListener("input",function(event) {
 	if(action){
 		var splited_action = action.split("-");
 		var action = splited_action[0];
-		var aim = splited_action[1];
+		if("sync" === action){
+			var aim = splited_action[1];
 
-		var tree = aim.split(".");
-		var dest = window[tree.shift()];
-		if(tree.length>1){
-			dest = dest[tree.shift()];
+			var tree = aim.split(".");
+			var dest = window[tree.shift()];
+			if(tree.length>1){
+				dest = dest[tree.shift()];
+			}
+			dest[tree.shift()] = target.value;
+			compileAndSet("play_ground",Page,"#play_ground");			
 		}
-		dest[tree.shift()] = target.value;
-		compileAndSet("play_ground",Page,"#play_ground");	
 	}
 });
 
 document.addEventListener("mouseover",function(event){
+
 	tip(event,true);
 });
 document.addEventListener("mouseout",function(event){
@@ -73,21 +77,23 @@ function tip(event,movein){
 		var action = splited_action[0];
 		var aim = splited_action[1];
 		if(action === "match_src"){
-			
-			var srcElement = target;
+			console.log(movein ? "over" : "out");
+			console.log(target);
+			var srcElement = target.parentElement;
 			var src = findSrc(aim);
-			var destElement = findTitle(src.next);
-			if(destElement){
-				tag([srcElement,destElement],movein);	
+			if(src.next){
+				console.log(src);
+				var destElement = findTitle(src.next);
+					tag([srcElement,destElement],movein,"matchTip");	
 			}
 		}else if(action === "match_dest"){
 			var destElement = target;
 
 			var srcAim = findOptionByDest(Number(aim));
-			console.log(srcAim);
 			var optionElement = findOption(srcAim);
+
 			if(optionElement){
-				tag([optionElement,destElement],movein);
+				tag([optionElement.parentElement,destElement],movein,"matchTip");
 			}
 		}
 	}	
@@ -99,7 +105,7 @@ function findOptionByDest( id ){
 		var data = questions[i].data;
 		if(data){
 			for(var j=0,jLength = data.length; j < jLength; j++){
-				if(id === data[j].next){
+				if(""+id === ""+data[j].next){
 					return ""+i+"_"+j;
 				}
 			}
@@ -123,52 +129,69 @@ var Match = {
 
 	start: function(src,target){
 		Match.src = src;
-		if(!target.checked){
-			var src = Match._findSrc();
-			unlink(src);
-		}else{
+		// if(!target.checked){
+		// 	var src = Match._findSrc();
+		// 	unlink(src);
+		// 	Match._tag(src,false,"matchActive");
+		// }else{
 			var dest = Match._findAllDest();
-			Match._tag(dest,true);	
-		}
+			Match._tag(dest,true,"matchActive");	
+		// }
 		
 	},
+	end: function(aim){
+		Match.src = aim;
+		var srcElement = findOption(Match.src);
+		srcElement.checked = false;
+		var src = Match._findSrc();
+		var dest = document.querySelector("#title_"+src.next);
+		Match._tag([srcElement.parentElement,dest],false,"matchTip");
+		unlink(src);
 
-	end: function(dest){
-		if(!Match.src){
-			return;
-		}
-		if(dest){
+		
+
+	},
+	finish: function(dest){
+		
+		if(dest && Match.src){
 			var src = Match._findSrc();
 			link(src,dest);			
 		}
 		var dest = Match._findAllDest();
-		Match._tag(dest,false);
+		Match._tag(dest,false,"matchActive");
+
 	},
 	_findSrc: function(){
 		return findSrc(Match.src);
 	},
 	_findAllDest: function(){
-		return document.querySelectorAll(".matchDest");
+		var matchDest = document.querySelectorAll(".matchDest");
+		return Array.prototype.slice.call(matchDest,0);
 	},
-	_tag: function(list,add){
-		tag(list,add);	
+	_tag: function(list,add,claz){
+		tag(list,add,claz);	
 	}
 };
 
-function tag(obj,add){
+function tag(obj,add,claz){
 	if(obj instanceof Array){
 		[].forEach.call(obj,function(dest){
-			if(add){
-				dest.classList.add("matchActive");
-			}else{
-				dest.classList.remove("matchActive");
+			if(dest){
+				if(add){
+					dest.classList.add(claz);
+				}else{
+					dest.classList.remove(claz);
+				}				
 			}
+
 		});	
 	}else{
 		if(add){
-			obj.classList.add("matchActive");
+			obj.classList.add(claz);
 		}else{
-			obj.classList.remove("matchActive");
+			if(obj.classList){
+				obj.classList.remove(claz)
+			}
 		}
 }
 }
@@ -208,13 +231,10 @@ function editQuestion(question,brandnew,index){
 }
 
 function addOption(){
-	console.log("hi");
 	var container = document.querySelector("#editor ul");
 	var sizeOfLi = container.querySelectorAll("li").length;
-	console.log(sizeOfLi);
 	var optionStr = compile("_option",{i:1+sizeOfLi});
 	var optionDom = parseDom(optionStr)[0];
-	console.log(typeof optionDom);
 	container.appendChild(optionDom);
 }
 
